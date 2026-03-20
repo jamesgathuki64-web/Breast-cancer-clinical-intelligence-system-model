@@ -17,6 +17,19 @@ async def predict(file: UploadFile = File(...)):
     # 🔴 LOAD YOUR MODEL HERE
     # prediction = your_model_predict(file_location)
 
-    prediction = "Cancer: Negative"  # replace with real output
+import tensorflow as tf
+from PIL import Image
+import numpy as np
+
+model = tf.keras.models.load_model("model.h5")
+
+def predict_image(path):
+    img = Image.open(path).resize((224, 224))
+    img = np.array(img) / 255.0
+    img = np.expand_dims(img, axis=0)
+
+    pred = model.predict(img)[0][0]
+
+    return "Cancer: Positive" if pred > 0.5 else "Cancer: Negative"
 
     return {"result": prediction}
